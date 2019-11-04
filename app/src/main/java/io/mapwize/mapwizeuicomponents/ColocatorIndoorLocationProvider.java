@@ -9,6 +9,7 @@ import android.location.Location;
 
 import net.crowdconnected.androidcolocator.CoLocator;
 import net.crowdconnected.androidcolocator.LocationCallback;
+import net.crowdconnected.androidcolocator.connector.LocationResponse;
 import net.crowdconnected.androidcolocator.messaging.ClientMessagingProtocol;
 
 import java.util.List;
@@ -46,17 +47,17 @@ public class ColocatorIndoorLocationProvider extends IndoorLocationProvider {
         sensorManager.registerListener(sensorCallback, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
         CoLocator.instance().registerLocationListener(new LocationCallback() {
             @Override
-            public void onLocationReceived(ClientMessagingProtocol.ClientLocationResponse clientLocationResponse) {
+            public void onLocationReceived(LocationResponse clientLocationResponse) {
 
             }
 
             @Override
-            public void onLocationsReceived(List<ClientMessagingProtocol.ClientLocationResponse> list) {
+            public void onLocationsReceived(List<LocationResponse> list) {
                 System.out.println("Messages Received");
-                for (ClientMessagingProtocol.ClientLocationResponse response : list) {
+                for (LocationResponse response : list) {
                     hadLocation = true;
                     System.out.println(response.getLatitude() + "," + response.getLongitude() + "," + response.getError());
-                    if (response.hasHeadingOffset()) {
+                    if (response.getHeadingOffset() != 0) {
                         headingOffset = response.getHeadingOffset();
                     } else {
                         headingOffset = null;

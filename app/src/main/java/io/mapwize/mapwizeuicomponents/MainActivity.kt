@@ -29,15 +29,15 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
-        val endpoint = "gejkhd6c.colocator.net:443/socket"
-        val appKey = "gejkhd6c"
+        val endpoint = "fdrgm64d.colocator.net:443/socket"
+        val appKey = "fdrgm64d"
         CoLocator.init(this.application, endpoint, appKey)
 
         // Uncomment and fill place holder to test MapwizeUI on your venue
         val opts = MapOptions.Builder()
                 .restrictContentToOrganization("5d2cb597612917003fe9913b")
                 //.restrictContentToVenue("YOUR_VENUE_ID")
-                .centerOnVenue("5d78f2cdf763ea001643b5cc")
+                .centerOnVenue("5daf325c4ddf80001615f1e3")
                 //.centerOnPlace("YOUR_PLACE_ID")
                 .build()
 
