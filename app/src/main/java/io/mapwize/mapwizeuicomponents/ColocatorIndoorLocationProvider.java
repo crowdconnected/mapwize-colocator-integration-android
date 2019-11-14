@@ -10,7 +10,6 @@ import android.location.Location;
 import net.crowdconnected.androidcolocator.CoLocator;
 import net.crowdconnected.androidcolocator.LocationCallback;
 import net.crowdconnected.androidcolocator.connector.LocationResponse;
-import net.crowdconnected.androidcolocator.messaging.ClientMessagingProtocol;
 
 import java.util.List;
 
@@ -20,21 +19,20 @@ import io.indoorlocation.core.IndoorLocationProvider;
 import static android.content.Context.SENSOR_SERVICE;
 
 public class ColocatorIndoorLocationProvider extends IndoorLocationProvider {
+
     private boolean isStarted = false;
     private Double headingOffset;
     private double lat, lng, error;
     private boolean hadLocation = false;
     private Float bearing;
+
     private SensorManager sensorManager;
     private SensorCallback sensorCallback;
+
     private Activity activity;
 
     public ColocatorIndoorLocationProvider(Activity activity) {
         this.activity = activity;
-    }
-
-    public void setIndoorLocation(IndoorLocation indoorLocation) {
-        this.dispatchIndoorLocationChange(indoorLocation);
     }
 
     public boolean supportsFloor() {
@@ -53,7 +51,6 @@ public class ColocatorIndoorLocationProvider extends IndoorLocationProvider {
 
             @Override
             public void onLocationsReceived(List<LocationResponse> list) {
-                System.out.println("Messages Received");
                 for (LocationResponse response : list) {
                     hadLocation = true;
                     System.out.println(response.getLatitude() + "," + response.getLongitude() + "," + response.getError());
@@ -73,6 +70,8 @@ public class ColocatorIndoorLocationProvider extends IndoorLocationProvider {
                     if (bearing != null) {
                         location.setBearing(bearing);
                     }
+
+                    // Check the floor number or contact CrowdConnected if you need to use multiple floors
                     dispatchIndoorLocationChange(new IndoorLocation(location, 0D));
                 }
             }

@@ -16,7 +16,6 @@ import io.mapwize.mapwizeformapbox.map.MapwizePlugin
 import kotlinx.android.synthetic.main.activity_main.*
 import net.crowdconnected.androidcolocator.CoLocator
 
-
 class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionListener {
 
     private var mapwizeFragment: MapwizeFragment? = null
@@ -29,31 +28,28 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
-        val endpoint = "fdrgm64d.colocator.net:443/socket"
-        val appKey = "fdrgm64d"
+        val endpoint = "YOUR_CC_APP_KEY.colocator.net:443/socket"
+        val appKey = "YOUR_CC_APP_KEY"
         CoLocator.init(this.application, endpoint, appKey)
 
-        // Uncomment and fill place holder to test MapwizeUI on your venue
+        var organisationID = "YOUR_ORGANISATION_ID"
+        val venueID = "YOUR_VENUE_ID"
         val opts = MapOptions.Builder()
-                .restrictContentToOrganization("5d2cb597612917003fe9913b")
-                //.restrictContentToVenue("YOUR_VENUE_ID")
-                .centerOnVenue("5daf325c4ddf80001615f1e3")
-                //.centerOnPlace("YOUR_PLACE_ID")
+                .restrictContentToOrganization(organisationID)
+                .centerOnVenue(venueID)
                 .build()
 
-        // Uncomment and change value to test different settings configuration
         var uiSettings = MapwizeFragmentUISettings.Builder()
                 .menuButtonHidden(true)
-                //.followUserButtonHidden(false)
                 .floorControllerHidden(true)
                 .compassHidden(true)
                 .build()
-        mapwizeFragment = MapwizeFragment.newInstance(opts, uiSettings)
+
+        this.mapwizeFragment = MapwizeFragment.newInstance(opts, uiSettings)
         val fm = supportFragmentManager
         val ft = fm.beginTransaction()
         ft.add(fragmentContainer.id, mapwizeFragment!!)
         ft.commit()
-
     }
 
     /**
@@ -66,10 +62,6 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         this.mapwizePlugin?.setLocationProvider(this.locationProvider!!)
         this.locationProvider!!.start()
         this.mapboxMap?.locationComponent?.renderMode = RenderMode.NORMAL
-//        this.mapwizePlugin?.addOnLongClickListener {
-//            val indoorLocation = IndoorLocation("manual_provider", it.latLngFloor.latitude, it.latLngFloor.longitude, it.latLngFloor.floor, System.currentTimeMillis())
-//            this.locationProvider?.setIndoorLocation(indoorLocation)
-//        }
     }
 
     override fun onMenuButtonClick() {
@@ -81,11 +73,9 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     override fun onFollowUserButtonClickWithoutLocation() {
-        Log.i("Debug", "onFollowUserButtonClickWithoutLocation")
     }
 
     override fun shouldDisplayInformationButton(mapwizeObject: MapwizeObject?): Boolean {
-        Log.i("Debug", "shouldDisplayInformationButton")
         when (mapwizeObject) {
             is Place -> return true
         }
@@ -93,7 +83,6 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     override fun shouldDisplayFloorController(floors: MutableList<Double>?): Boolean {
-        Log.i("Debug", "shouldDisplayFloorController")
         if (floors == null || floors.size <= 1) {
             return false
         }

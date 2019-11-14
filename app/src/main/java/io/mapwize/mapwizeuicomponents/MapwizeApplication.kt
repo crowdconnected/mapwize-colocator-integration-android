@@ -8,7 +8,9 @@ class MapwizeApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AccountManager.start(this, "7b63e66f6a5bebaea25fc5a0e276d5ec")
+
+        var APIKey = "YOUR_MAPWIZE_API_KEY"
+        AccountManager.start(this, APIKey);
     }
 
 }
