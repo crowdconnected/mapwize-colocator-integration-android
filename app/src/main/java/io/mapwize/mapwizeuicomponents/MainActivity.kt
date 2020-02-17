@@ -17,21 +17,28 @@ import android.support.v4.app.*
 
 class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionListener {
 
+    private var settingsFragment: SettingsFragment? = null
     private var mapboxMap: MapboxMap? = null
     private var mapwizePlugin: MapwizePlugin? = null
     private var locationProvider: ColocatorIndoorLocationProvider? = null
 
     private var settingsToggled = false;
 
+    private var mapwizeAPIKey = "376d94542c92f13531f7268e877ace01"
     private var venueID = "5e2061c051eef50016a22b2c"
     private var mapOptions: MapOptions? = null
     private var mapUISettings: MapwizeFragmentUISettings? = null
+
+    private var colocatorAppKey = "qk65p7mf"
+    private var colocatorEndPoint = "staging.colocator.net:443/socket"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
+
+        settingsFragment = SettingsFragment()
 
         setupSettingsForColocator()
         setupSettingsForMap()
@@ -41,12 +48,16 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     private fun setupSettingsForColocator() {
-        val endpoint = "staging.colocator.net:443/socket"
-        val appKey = "qk65p7mf"
-        CoLocator.start(this.application, endpoint, appKey)
+        if (CoLocator.instance() != null) {
+            CoLocator.instance().stop()
+        }
+        CoLocator.start(this.application, colocatorEndPoint, colocatorAppKey)
     }
 
     private fun setupSettingsForMap() {
+        //TODO Check it this works
+        MapwizeApplication.startwithAPIKey(mapwizeAPIKey)
+
         mapOptions = MapOptions.Builder()
                 .centerOnVenue(venueID)
                 .build()
@@ -70,11 +81,10 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     private fun displaySettingsFragment() {
-        val settingsFragment = SettingsFragment()
         val manager = supportFragmentManager
         val transaction = manager.beginTransaction()
 
-        transaction.replace(R.id.fragment_container,settingsFragment)
+        transaction.replace(R.id.fragment_container,settingsFragment!!)
         transaction.addToBackStack(null)
 
         transaction.commit()
@@ -82,12 +92,22 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
 
     fun  toggleSettings(view: View) {
         if (settingsToggled) {
+            setupSettingsForColocator()
+            setupSettingsForMap()
             displayMapFragment()
         } else {
+            settingsFragment!!.updateViewsVithCredentials()
             displaySettingsFragment()
         }
 
         settingsToggled = !settingsToggled
+    }
+
+    fun receivedNewSettings(appKey: String, serverEndPoint: String, venueID: String, apiKey: String) {
+        this.mapwizeAPIKey = apiKey
+        this.venueID = venueID
+        this.colocatorAppKey = appKey
+        this.colocatorEndPoint = serverEndPoint
     }
 
     /**

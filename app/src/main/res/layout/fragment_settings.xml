@@ -1,17 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsFragment">
+    tools:context=".MainActivity"
+    android:layout_margin="6dp"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:text="Colocator Settings"/>
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apply Changes"/>
+        android:layout_marginTop="10dp"
+        android:textSize="16dp"
+        android:text="App Key"/>
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/colocatorAppKeyEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="appkey"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16dp"
+        android:text="Server"/>
+
+    <TextView
+        android:id="@+id/colocatorServerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"
+        android:text="STAGING"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/developmentButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Develop"/>
+        <Button
+            android:id="@+id/stagingButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Staging"/>
+        <Button
+            android:id="@+id/productionButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Production"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:text="Mapwize Settings"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16dp"
+        android:text="Venue ID"/>
+
+    <EditText
+        android:id="@+id/venueIDEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="venueid"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16dp"
+        android:text="API Key"/>
+
+    <EditText
+        android:id="@+id/mapwizeAPIKeyEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="apikey"/>
+
+
+</LinearLayout>
