@@ -2,9 +2,8 @@ package io.mapwize.mapwizeuicomponents
 
 import android.Manifest
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.view.View
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import io.mapwize.mapwizecomponents.ui.MapwizeFragment
@@ -13,43 +12,82 @@ import io.mapwize.mapwizeformapbox.api.MapwizeObject
 import io.mapwize.mapwizeformapbox.api.Place
 import io.mapwize.mapwizeformapbox.map.MapOptions
 import io.mapwize.mapwizeformapbox.map.MapwizePlugin
-import kotlinx.android.synthetic.main.activity_main.*
 import net.crowdconnected.androidcolocator.CoLocator
+import android.support.v4.app.*
 
 class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionListener {
 
-    private var mapwizeFragment: MapwizeFragment? = null
     private var mapboxMap: MapboxMap? = null
     private var mapwizePlugin: MapwizePlugin? = null
     private var locationProvider: ColocatorIndoorLocationProvider? = null
+
+    private var settingsToggled = false;
+
+    private var venueID = "5e2061c051eef50016a22b2c"
+    private var mapOptions: MapOptions? = null
+    private var mapUISettings: MapwizeFragmentUISettings? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
-        val endpoint = "YOUR_CC_APP_KEY.colocator.net:443/socket"
-        val appKey = "YOUR_CC_APP_KEY"
-        CoLocator.init(this.application, endpoint, appKey)
 
-        var organisationID = "YOUR_ORGANISATION_ID"
-        val venueID = "YOUR_VENUE_ID"
-        val opts = MapOptions.Builder()
-                .restrictContentToOrganization(organisationID)
+        setupSettingsForColocator()
+        setupSettingsForMap()
+        displayMapFragment()
+
+        settingsToggled = false
+    }
+
+    private fun setupSettingsForColocator() {
+        val endpoint = "staging.colocator.net:443/socket"
+        val appKey = "qk65p7mf"
+        CoLocator.start(this.application, endpoint, appKey)
+    }
+
+    private fun setupSettingsForMap() {
+        mapOptions = MapOptions.Builder()
                 .centerOnVenue(venueID)
                 .build()
 
-        var uiSettings = MapwizeFragmentUISettings.Builder()
+        mapUISettings = MapwizeFragmentUISettings.Builder()
                 .menuButtonHidden(true)
                 .floorControllerHidden(true)
                 .compassHidden(true)
                 .build()
+    }
 
-        this.mapwizeFragment = MapwizeFragment.newInstance(opts, uiSettings)
-        val fm = supportFragmentManager
-        val ft = fm.beginTransaction()
-        ft.add(fragmentContainer.id, mapwizeFragment!!)
-        ft.commit()
+    private fun displayMapFragment() {
+        val mapwizeFragment = MapwizeFragment.newInstance(mapOptions!!, mapUISettings!!)
+        val manager = supportFragmentManager
+        val transaction = manager.beginTransaction()
+
+        transaction.replace(R.id.fragment_container, mapwizeFragment)
+        transaction.addToBackStack(null)
+
+        transaction.commit()
+    }
+
+    private fun displaySettingsFragment() {
+        val settingsFragment = SettingsFragment()
+        val manager = supportFragmentManager
+        val transaction = manager.beginTransaction()
+
+        transaction.replace(R.id.fragment_container,settingsFragment)
+        transaction.addToBackStack(null)
+
+        transaction.commit()
+    }
+
+    fun  toggleSettings(view: View) {
+        if (settingsToggled) {
+            displayMapFragment()
+        } else {
+            displaySettingsFragment()
+        }
+
+        settingsToggled = !settingsToggled
     }
 
     /**
@@ -65,11 +103,9 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     override fun onMenuButtonClick() {
-
     }
 
     override fun onInformationButtonClick(mapwizeObject: MapwizeObject?) {
-
     }
 
     override fun onFollowUserButtonClickWithoutLocation() {
@@ -88,5 +124,4 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         }
         return true
     }
-
 }

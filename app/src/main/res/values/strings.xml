@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MapwizeUIComponents</string>
-    <!-- Strings used by Mapwize Fragment. You can use them to translate the Fragment
-    text or change them.
-    Those values override the default strings value found in mapwizecomponent project-->
     <string name="time_placeholder">%1$d min</string>
     <string name="floor_placeholder">Floor %1$s</string>
     <string name="search_in_placeholder">Search in %1$s…</string>

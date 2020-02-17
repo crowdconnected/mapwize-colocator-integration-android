@@ -36,6 +36,7 @@ dependencies {
     implementation "com.android.support:design:$app_compat_version"
     implementation "com.github.IndoorLocation:indoor-location-android:$indoor_location_version"
     implementation "io.mapwize.indoormaps:MapwizeForMapbox:2.3.+"
+
 }
 repositories {
     mavenCentral()
