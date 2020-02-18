@@ -104,5 +104,11 @@
         android:layout_height="wrap_content"
         android:text="apikey"/>
 
+    <Button
+        android:id="@+id/updateAPIKeyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update API Key"/>
+
 
 </LinearLayout>

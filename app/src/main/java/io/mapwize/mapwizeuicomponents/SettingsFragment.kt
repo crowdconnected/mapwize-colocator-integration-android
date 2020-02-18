@@ -1,6 +1,7 @@
 package io.mapwize.mapwizeuicomponents
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 
 /**
  * A simple [Fragment] subclass.
@@ -17,6 +19,7 @@ import android.widget.TextView
 class SettingsFragment : Fragment() {
 
     private var mapwizeAPIKey = "376d94542c92f13531f7268e877ace01"
+    private var temporaryNewAPIKey = ""
     private var venueID = "5e2061c051eef50016a22b2c"
 
     private var colocatorAppKey = "qk65p7mf"
@@ -30,6 +33,7 @@ class SettingsFragment : Fragment() {
     var colocatorServerTextView: TextView? = null
     var venueIDEditText: EditText? = null
     var mapwizeAPIKeyEditText: EditText? = null
+    var updateAPIKeyButton: Button? = null
 
     var developmentButton: Button? = null
     var stagingButton: Button? = null
@@ -40,10 +44,17 @@ class SettingsFragment : Fragment() {
 
         var rootView = inflater.inflate(R.layout.fragment_settings, container, false)
 
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        var savedMapwizeAPIKey = sharedPref.getString("mapwize_api_key", null)
+        if (savedMapwizeAPIKey != null) {
+            mapwizeAPIKey = savedMapwizeAPIKey!!
+        }
+
         appKeyTextEdit = rootView.findViewById(R.id.colocatorAppKeyEditText)
         colocatorServerTextView = rootView.findViewById(R.id.colocatorServerTextView)
         venueIDEditText = rootView.findViewById(R.id.venueIDEditText)
         mapwizeAPIKeyEditText = rootView.findViewById(R.id.mapwizeAPIKeyEditText)
+        updateAPIKeyButton = rootView.findViewById(R.id.updateAPIKeyButton)
 
         developmentButton = rootView.findViewById(R.id.developmentButton)
         stagingButton = rootView.findViewById(R.id.stagingButton)
@@ -105,8 +116,7 @@ class SettingsFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s != null) {
                         if (s.length > 15) {
-                            mapwizeAPIKey = s.toString()
-                            credentialsHaveBeenUpdated()
+                            temporaryNewAPIKey = s.toString()
                         }
                     }
                 }
@@ -148,6 +158,23 @@ class SettingsFragment : Fragment() {
                 }
             })
         }
+
+        if (updateAPIKeyButton != null) {
+            updateAPIKeyButton!!.setOnClickListener(object: View.OnClickListener {
+                override fun onClick(v: View?) {
+                    if ( temporaryNewAPIKey.length < 15) {
+                        Toast.makeText(context, "Mapwize API Key doesn't seem correct", Toast.LENGTH_SHORT).show()
+                    } else {
+                        mapwizeAPIKey = temporaryNewAPIKey
+                        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+                        sharedPref.edit().putString("mapwize_api_key", temporaryNewAPIKey).commit()
+                        credentialsHaveBeenUpdated()
+
+                        Toast.makeText(context, "API Key updated. Please restart the app", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        }
     }
 
     fun updateViewsVithCredentials() {
@@ -177,5 +204,4 @@ class SettingsFragment : Fragment() {
     fun credentialsHaveBeenUpdated() {
         (activity as MainActivity).receivedNewSettings(colocatorAppKey, colocatorEndPoint, venueID, mapwizeAPIKey)
     }
-
 }

@@ -55,9 +55,6 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     private fun setupSettingsForMap() {
-        //TODO Check it this works
-        MapwizeApplication.startwithAPIKey(mapwizeAPIKey)
-
         mapOptions = MapOptions.Builder()
                 .centerOnVenue(venueID)
                 .build()
