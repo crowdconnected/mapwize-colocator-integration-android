@@ -2,7 +2,7 @@ package io.mapwize.mapwizeuicomponents
 
 import android.Manifest
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -13,7 +13,7 @@ import io.mapwize.mapwizeformapbox.api.Place
 import io.mapwize.mapwizeformapbox.map.MapOptions
 import io.mapwize.mapwizeformapbox.map.MapwizePlugin
 import net.crowdconnected.androidcolocator.CoLocator
-import android.support.v4.app.*
+import androidx.core.app.*
 
 class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionListener {
 
