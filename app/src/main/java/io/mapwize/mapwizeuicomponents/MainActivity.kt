@@ -2,8 +2,11 @@ package io.mapwize.mapwizeuicomponents
 
 import android.Manifest
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.widget.Toast
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import io.mapwize.mapwizecomponents.ui.MapwizeFragment
@@ -14,6 +17,7 @@ import io.mapwize.mapwizeformapbox.map.MapOptions
 import io.mapwize.mapwizeformapbox.map.MapwizePlugin
 import net.crowdconnected.androidcolocator.CoLocator
 import androidx.core.app.*
+import java.time.Duration
 
 class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionListener {
 
@@ -25,11 +29,11 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     private var settingsToggled = false;
 
     private var mapwizeAPIKey = "376d94542c92f13531f7268e877ace01"
-    private var venueID = "5e2061c051eef50016a22b2c"
+    private var venueID = ""
     private var mapOptions: MapOptions? = null
     private var mapUISettings: MapwizeFragmentUISettings? = null
 
-    private var colocatorAppKey = "qk65p7mf"
+    private var colocatorAppKey = ""
     private var colocatorEndPoint = "staging.colocator.net:443/socket"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +41,10 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         setContentView(R.layout.activity_main)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        colocatorAppKey = sharedPref.getString("colocator_app_key", "")
+        venueID = sharedPref.getString("mapwize_venue_id", "")
 
         settingsFragment = SettingsFragment()
 
@@ -50,8 +58,14 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     private fun setupSettingsForColocator() {
         if (CoLocator.instance() != null) {
             CoLocator.instance().stop()
+            Log.e("DEV","Colocator stopped ")
         }
-        CoLocator.start(this.application, colocatorEndPoint, colocatorAppKey)
+        if (colocatorAppKey.isEmpty()) {
+            Toast.makeText(applicationContext, "Set an App Key for Colocator", Toast.LENGTH_LONG)
+            return
+        }
+
+        CoLocator.start(this.application, colocatorAppKey, colocatorEndPoint)
     }
 
     private fun setupSettingsForMap() {
@@ -93,7 +107,7 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
             setupSettingsForMap()
             displayMapFragment()
         } else {
-            settingsFragment!!.updateViewsVithCredentials()
+            settingsFragment!!.updateViewsWithCredentials()
             displaySettingsFragment()
         }
 
@@ -105,6 +119,13 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
         this.venueID = venueID
         this.colocatorAppKey = appKey
         this.colocatorEndPoint = serverEndPoint
+    }
+
+    fun setupDeviceID(view: View) {
+        var id = CoLocator.instance().deviceId
+        if (settingsToggled && settingsFragment != null) {
+            settingsFragment!!.updateDeviceID(id)
+        }
     }
 
     /**

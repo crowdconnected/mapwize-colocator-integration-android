@@ -43,6 +43,11 @@ public class ColocatorIndoorLocationProvider extends IndoorLocationProvider {
         this.sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
         sensorCallback = new ColocatorIndoorLocationProvider.SensorCallback();
         sensorManager.registerListener(sensorCallback, sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_NORMAL);
+        if (CoLocator.instance() == null) {
+            this.isStarted = false;
+            return;
+        }
+
         CoLocator.instance().registerLocationListener(new LocationCallback() {
             @Override
             public void onLocationReceived(LocationResponse clientLocationResponse) {

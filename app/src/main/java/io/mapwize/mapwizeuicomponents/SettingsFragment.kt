@@ -5,6 +5,7 @@ import android.preference.PreferenceManager
 import androidx.fragment.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import net.crowdconnected.androidcolocator.CoLocator
 
 /**
  * A simple [Fragment] subclass.
@@ -20,9 +22,9 @@ class SettingsFragment : Fragment() {
 
     private var mapwizeAPIKey = "376d94542c92f13531f7268e877ace01"
     private var temporaryNewAPIKey = ""
-    private var venueID = "5e2061c051eef50016a22b2c"
+    private var venueID = ""
 
-    private var colocatorAppKey = "qk65p7mf"
+    private var colocatorAppKey = ""
     private var colocatorEndPoint = "staging.colocator.net:443/socket"
 
     private val productionEndpoint = "production.colocator.net:443/socket"
@@ -39,6 +41,9 @@ class SettingsFragment : Fragment() {
     var stagingButton: Button? = null
     var productionButton: Button? = null
 
+    var deviceIDButton: Button? = null
+    var deviceIDTextView: TextView? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -49,6 +54,8 @@ class SettingsFragment : Fragment() {
         if (savedMapwizeAPIKey != null) {
             mapwizeAPIKey = savedMapwizeAPIKey!!
         }
+        colocatorAppKey = sharedPref.getString("colocator_app_key", "")
+        venueID = sharedPref.getString("mapwize_venue_id", "")
 
         appKeyTextEdit = rootView.findViewById(R.id.colocatorAppKeyEditText)
         colocatorServerTextView = rootView.findViewById(R.id.colocatorServerTextView)
@@ -60,8 +67,11 @@ class SettingsFragment : Fragment() {
         stagingButton = rootView.findViewById(R.id.stagingButton)
         productionButton = rootView.findViewById(R.id.productionButton)
 
+        deviceIDButton = rootView.findViewById(R.id.deviceIDButton)
+        deviceIDTextView = rootView.findViewById(R.id.deviceIDTextView)
+
         updateViewsWithListeners()
-        updateViewsVithCredentials()
+        updateViewsWithCredentials()
 
         return rootView
     }
@@ -79,6 +89,9 @@ class SettingsFragment : Fragment() {
                     if (s != null) {
                         if (s.length == 8) {
                             colocatorAppKey = s.toString()
+
+                            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+                            sharedPref.edit().putString("colocator_app_key", colocatorAppKey).commit()
                             credentialsHaveBeenUpdated()
                         }
                     }
@@ -98,6 +111,9 @@ class SettingsFragment : Fragment() {
                     if (s != null) {
                         if (s.length > 10) {
                             venueID = s.toString()
+
+                            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+                            sharedPref.edit().putString("mapwize_venue_id", venueID).commit()
                             credentialsHaveBeenUpdated()
                         }
                     }
@@ -177,7 +193,13 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    fun updateViewsVithCredentials() {
+    fun updateDeviceID(id: String) {
+        if ( id != null && deviceIDTextView != null ) {
+            deviceIDTextView!!.setText("ID " + id.toUpperCase())
+        }
+    }
+
+    fun updateViewsWithCredentials() {
         if (appKeyTextEdit != null) {
             appKeyTextEdit!!.setText(colocatorAppKey)
         }
