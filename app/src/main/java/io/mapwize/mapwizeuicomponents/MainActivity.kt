@@ -122,6 +122,9 @@ class MainActivity : AppCompatActivity(), MapwizeFragment.OnFragmentInteractionL
     }
 
     fun setupDeviceID(view: View) {
+        if (CoLocator.instance() == null) {
+            return
+        }
         var id = CoLocator.instance().deviceId
         if (settingsToggled && settingsFragment != null) {
             settingsFragment!!.updateDeviceID(id)
